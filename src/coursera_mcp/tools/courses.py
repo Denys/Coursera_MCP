@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-from typing import Any
 
 from coursera_mcp.client import CourseraClient
 from coursera_mcp.models import Course, CourseList

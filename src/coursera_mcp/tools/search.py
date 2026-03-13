@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from coursera_mcp.client import CourseraClient
 from coursera_mcp.models import SearchResult
 from coursera_mcp.tools.courses import COURSE_FIELDS

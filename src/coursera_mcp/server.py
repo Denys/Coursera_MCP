@@ -2,18 +2,24 @@
 
 from __future__ import annotations
 
-import asyncio
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import AsyncIterator
 
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
-from coursera_mcp.client import CourseraClient, CourseraError
+from coursera_mcp.client import CourseraClient
 from coursera_mcp.config import load_config
 from coursera_mcp.resources import read_course_resource, read_specialization_resource
 from coursera_mcp.tools.courses import get_course, get_course_by_slug, list_courses
+from coursera_mcp.tools.enrolled import list_enrolled_courses
+from coursera_mcp.tools.grades import get_course_grades
 from coursera_mcp.tools.instructors import get_instructor, list_instructors
+from coursera_mcp.tools.materials import (
+    get_course_materials,
+    get_lecture_video,
+    get_supplement,
+)
 from coursera_mcp.tools.partners import get_partner, list_partners
 from coursera_mcp.tools.search import search_courses
 from coursera_mcp.tools.specializations import get_specialization, list_specializations
@@ -178,6 +184,62 @@ async def coursera_list_specializations(
     Returns JSON with a list of specializations and total count.
     """
     return await list_specializations(_client(), start=start, limit=limit)
+
+
+# ---------------------------------------------------------------------------
+# Enrolled course tools (require CAUTH authentication)
+# ---------------------------------------------------------------------------
+
+@mcp.tool()
+async def coursera_list_enrolled_courses() -> str:
+    """List courses the authenticated user is currently enrolled in.
+
+    Requires CAUTH authentication. Returns JSON with enrolled course IDs,
+    names, and slugs.
+    """
+    return await list_enrolled_courses(_client())
+
+
+@mcp.tool()
+async def coursera_get_course_materials(course_slug: str) -> str:
+    """Get the full syllabus/structure for an enrolled course.
+
+    Returns JSON with modules, lessons, and items (lectures, quizzes,
+    assignments). Each item includes its type (lecture, quiz, supplement, etc.).
+    Requires CAUTH authentication.
+    """
+    return await get_course_materials(_client(), course_slug=course_slug)
+
+
+@mcp.tool()
+async def coursera_get_lecture_video(course_id: str, video_id: str) -> str:
+    """Get video URLs and subtitles for a specific lecture.
+
+    Returns JSON with video download links (by resolution) and subtitle URLs.
+    The video_id comes from the contentSummary.definition.videoId field in
+    course materials. Requires CAUTH authentication.
+    """
+    return await get_lecture_video(_client(), course_id=course_id, video_id=video_id)
+
+
+@mcp.tool()
+async def coursera_get_supplement(course_id: str, element_id: str) -> str:
+    """Get a supplement (reading/resource) for a course item.
+
+    Returns JSON with the supplement content. The element_id comes from the
+    item ID in course materials. Requires CAUTH authentication.
+    """
+    return await get_supplement(_client(), course_id=course_id, element_id=element_id)
+
+
+@mcp.tool()
+async def coursera_get_course_grades(course_id: str) -> str:
+    """Get grade information for an enrolled course.
+
+    Returns JSON with overall grade, passing status, and per-item grades.
+    Requires CAUTH authentication.
+    """
+    return await get_course_grades(_client(), course_id=course_id)
 
 
 # ---------------------------------------------------------------------------

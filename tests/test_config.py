@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from coursera_mcp.config import CourseraConfig, load_config
 
 

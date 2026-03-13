@@ -17,6 +17,16 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that co
 | `coursera_get_specialization` | Get specialization details and course list |
 | `coursera_list_specializations` | List specializations (paginated) |
 
+### Enrolled Content (requires CAUTH authentication)
+
+| Tool | Description |
+|------|-------------|
+| `coursera_list_enrolled_courses` | List courses the user is enrolled in |
+| `coursera_get_course_materials` | Get full course syllabus (modules, lessons, items) |
+| `coursera_get_lecture_video` | Get video URLs and subtitles for a lecture |
+| `coursera_get_supplement` | Get a reading/supplement for a course item |
+| `coursera_get_course_grades` | Get grades for an enrolled course |
+
 **MCP Resources:**
 
 - `coursera://course/{course_id}` — browse a course as a read-only resource
@@ -45,7 +55,7 @@ pip install .
 
 The Coursera Catalog API is **public** — no authentication is needed for browsing courses, instructors, partners, and specializations.
 
-For accessing enrolled course content (future enhancement), set a CAUTH cookie from your Coursera session:
+For accessing enrolled course content (materials, grades, videos), set a CAUTH cookie from your Coursera session. You can find it in Chrome DevTools → Application → Cookies → `https://www.coursera.org` → `CAUTH`:
 
 ```bash
 export COURSERA_CAUTH=your_cauth_cookie_value
@@ -119,7 +129,10 @@ src/coursera_mcp/
     ├── search.py          # Course search
     ├── instructors.py     # Instructor operations
     ├── partners.py        # Partner (university/org) operations
-    └── specializations.py # Specialization operations
+    ├── specializations.py # Specialization operations
+    ├── enrolled.py        # Enrolled courses (requires auth)
+    ├── materials.py       # Course materials, lectures, supplements (requires auth)
+    └── grades.py          # Course grades (requires auth)
 ```
 
 ## License

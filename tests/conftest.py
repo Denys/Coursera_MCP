@@ -26,3 +26,12 @@ def mock_client(config: CourseraConfig) -> CourseraClient:
     client = CourseraClient(config)
     client.get = AsyncMock()  # type: ignore[method-assign]
     return client
+
+
+@pytest.fixture
+def auth_mock_client(auth_config: CourseraConfig) -> CourseraClient:
+    """An authenticated CourseraClient with mocked HTTP methods."""
+    client = CourseraClient(auth_config)
+    client.get = AsyncMock()  # type: ignore[method-assign]
+    client.post = AsyncMock()  # type: ignore[method-assign]
+    return client
