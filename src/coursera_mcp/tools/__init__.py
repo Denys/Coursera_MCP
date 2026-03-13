@@ -1,0 +1,1 @@
+"""Coursera MCP tool implementations."""
